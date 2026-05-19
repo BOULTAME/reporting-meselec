@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporting équipe — MESELEC</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F5F3EF;--card:#FFFFFF;--border:#E5E2DC;--text:#1A1A1A;--text2:#6B6860;--accent:#2D5BE3;--accent-light:#EEF2FD;--green:#1A7F5A;--green-light:#E8F5EF;--orange:#C45E00;--orange-light:#FEF0E3;--red:#C0392B;--red-light:#FDEDED;--radius:12px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;gap:2rem}
+.login-title{font-size:28px;font-weight:600;text-align:center;letter-spacing:-0.5px}
+.login-sub{font-size:14px;color:var(--text2);text-align:center}
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;width:100%;max-width:520px}
+.login-btn{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 10px;cursor:pointer;text-align:center;transition:all .15s;font-family:'DM Sans',sans-serif}
+.login-btn:hover{border-color:var(--accent);background:var(--accent-light)}
+.login-btn .av{width:40px;height:40px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
+.login-btn .name{font-size:13px;font-weight:500;color:var(--text)}
+.manager-btn{background:var(--text);border-color:var(--text);color:#fff;border-radius:var(--radius);padding:12px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;margin-top:8px;border:none}
+.app{display:none;flex-direction:column;min-height:100vh}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.topbar-name{font-size:14px;font-weight:500}
+.topbar-date{font-size:12px;color:var(--text2)}
+.logout-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2)}
+.content{padding:20px;max-width:700px;margin:0 auto;width:100%}
+.section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.task-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;transition:border-color .15s}
+.task-card.done{border-color:var(--green);background:var(--green-light)}
+.task-card.blocked{border-color:var(--red);background:var(--red-light)}
+.task-name{font-size:14px;font-weight:500;color:var(--text);line-height:1.4}
+.task-meta{font-size:11px;color:var(--text2);margin-top:2px;font-family:'DM Mono',monospace}
+.status-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.status-btn{height:28px;padding:0 10px;border-radius:6px;border:1.5px solid var(--border);background:transparent;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);transition:all .12s}
+.status-btn.active-todo{background:#E8EEFF;border-color:var(--accent);color:var(--accent)}
+.status-btn.active-inprogress{background:var(--orange-light);border-color:var(--orange);color:var(--orange)}
+.status-btn.active-done{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.status-btn.active-blocked{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.comment-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);resize:none;height:60px;transition:border-color .12s}
+.comment-input:focus{outline:none;border-color:var(--accent)}
+.save-btn{margin-top:8px;height:32px;padding:0 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.saved-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--green);margin-top:8px;opacity:0;transition:opacity .3s;margin-left:8px}
+.saved-badge.show{opacity:1}
+.manager-tabs{display:flex;gap:6px;margin-bottom:16px}
+.mtab{height:32px;padding:0 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2)}
+.mtab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.manager-table{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.manager-table table{width:100%;border-collapse:collapse;font-size:12px}
+.manager-table th{text-align:left;padding:8px 12px;font-size:11px;font-weight:600;color:var(--text2);background:var(--bg);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
+.manager-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text)}
+.manager-table tr:last-child td{border-bottom:none}
+.manager-table tr:hover td{background:var(--bg)}
+.s-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.s-todo{background:#E8EEFF;color:var(--accent)}
+.s-inprogress{background:var(--orange-light);color:var(--orange)}
+.s-done{background:var(--green-light);color:var(--green)}
+.s-blocked{background:var(--red-light);color:var(--red)}
+.s-missing{background:#F5F3EF;color:var(--text2)}
+.alert-bar{background:var(--red-light);border:1.5px solid var(--red);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.progress-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.ps-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;text-align:center}
+.ps-val{font-size:22px;font-weight:600}
+.ps-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="login" id="loginScreen">
+  <div class="login-title">Reporting équipe MESELEC</div>
+  <div class="login-sub">Qui êtes-vous ?</div>
+  <div class="login-grid" id="loginGrid"></div>
+  <button class="manager-btn" onclick="loginManager()">👔 Accès Manager</button>
+</div>
+<div class="app" id="appScreen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-av" id="topAv"></div>
+      <div>
+        <div class="topbar-name" id="topName"></div>
+        <div class="topbar-date" id="topDate"></div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Changer</button>
+  </div>
+  <div class="content" id="appContent"></div>
+</div>
+<script>
+const USERS=[
+  {name:'Mialy',color:'#E1F5EE',fg:'#085041',tasks:{quotidien:['Gestion comptabilité générale','Gestion des absences salariés'],hebdo:[{t:'Relancer clients impayés',jour:'Lundi'},{t:'Préparation paiement fournisseurs',jour:'Vendredi'}],mensuel:[{t:'Facturer les devis',jour:'15 et 30 du mois'},{t:'Affacturer les factures',jour:'15 et 30 du mois'},{t:'Préparation des paies',jour:'Arrêt le 25'},{t:'Déclaration TVA',jour:'Fin de mois'},{t:'Reporting trésorerie',jour:'Fin de mois'},{t:'Déclaration DSN',jour:'Fin de mois'},{t:'Fiches de paie',jour:'Arrêt le 25'},{t:'Intégration OD paie',jour:'Fin de mois'},{t:'Suivi plan de formation',jour:'Fin de mois'},{t:'Gestion carte gazole',jour:'15 et 31 du mois'}]}},
+  {name:'Soukaina',color:'#FAEEDA',fg:'#633806',tasks:{quotidien:['Brief productivité cible → Younous','Valider feuilles attachement ERP','Mettre à jour données projets','Feuilles manquantes → Younous'],hebdo:[{t:'Planning hebdo EP/Tertiaire',jour:'Vendredi'},{t:'Point pilotage exploitation',jour:'Vendredi'},{t:'Prépa réunions planning',jour:'Vendredi'}],mensuel:[{t:'Relancer devis en attente',jour:'15 et 31 du mois'},{t:'Relevé mensuel jours travaillés',jour:'Fin de mois'},{t:'Point facturation au 15',jour:'Le 15'},{t:'Point facturation au 30/31',jour:'Le 30/31'}]}},
+  {name:'Younous',color:'#E6F1FB',fg:'#0C447C',tasks:{quotidien:['Brief chantiers → Soukaina','Récupérer feuilles attachement terrain','Contrôle cadence & performances terrain'],hebdo:[],mensuel:[{t:'Contrôle EPI/Outils chantier',jour:'Dernière semaine'},{t:'Entretien véhicules',jour:'1x par trimestre'}]}},
+  {name:'Lina',color:'#FBEAF0',fg:'#72243E',tasks:{quotidien:[],hebdo:[{t:'Gestion LinkedIn',jour:'Lundi'},{t:'Fiche prospect',jour:'Mercredi'}],mensuel:[]}},
+  {name:'Yanis',color:'#EAF3DE',fg:'#27500A',tasks:{quotidien:[],hebdo:[{t:'Gestion dépôt extérieur',jour:'Mar. & Jeu. après-midi'}],mensuel:[]}},
+  {name:'Arnaud',color:'#FAECE7',fg:'#712B13',tasks:{quotidien:['Gestion dépôt intérieur'],hebdo:[],mensuel:[]}},
+  {name:'Salim',color:'#EEEDFE',fg:'#3C3489',tasks:{quotidien:[],hebdo:[],mensuel:[{t:'Point mensuel situation financière',jour:'Fin de mois'},{t:'Reporting P&L',jour:'Fin de mois'}]}},
+  {name:'Cissé',color:'#FCEBEB',fg:'#791F1F',tasks:{quotidien:[],hebdo:[],mensuel:[]}},
+  {name:'Rida',color:'#F1EFE8',fg:'#444441',tasks:{quotidien:[],hebdo:[],mensuel:[]}},
+  {name:'Mathieu',color:'#FAEEDA',fg:'#854F0B',tasks:{quotidien:[],hebdo:[],mensuel:[]}},
+];
+let currentUser=null,isManager=false,mTab='quotidien';
+const state={};
+function getToday(){return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
+function getTodayKey(){return new Date().toISOString().slice(0,10);}
+function av(u,size=32){return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${u.color};color:${u.fg};display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.38)}px;font-weight:600">${u.name.slice(0,2).toUpperCase()}</div>`;}
+function buildLogin(){document.getElementById('loginGrid').innerHTML=USERS.map(u=>`<button class="login-btn" onclick="login('${u.name}')">${av(u,40)}<div class="name">${u.name}</div></button>`).join('');}
+function login(name){currentUser=USERS.find(u=>u.name===name);isManager=false;showApp();}
+function loginManager(){currentUser=null;isManager=true;showApp();}
+function logout(){document.getElementById('loginScreen').style.display='flex';document.getElementById('appScreen').style.display='none';}
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='flex';
+  document.getElementById('topDate').textContent=getToday();
+  if(isManager){
+    document.getElementById('topAv').style.cssText='width:32px;height:32px;border-radius:50%;background:#1A1A1A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px';
+    document.getElementById('topAv').textContent='👔';
+    document.getElementById('topName').textContent='Vue Manager';
+    renderManager();
+  } else {
+    document.getElementById('topAv').style.cssText=`width:32px;height:32px;border-radius:50%;background:${currentUser.color};color:${currentUser.fg};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600`;
+    document.getElementById('topAv').textContent=currentUser.name.slice(0,2).toUpperCase();
+    document.getElementById('topName').textContent=currentUser.name;
+    renderUser();
+  }
+}
+function getKey(u,t,f){return `${u}||${f}||${t}||${getTodayKey()}`;}
+function getState(u,t,f){return state[getKey(u,t,f)]||{status:'',comment:''};}
+function setState(u,t,f,field,val){const k=getKey(u,t,f);if(!state[k])state[k]={status:'',comment:''};state[k][field]=val;}
+function renderUser(){
+  const u=currentUser;let html='';
+  if(u.tasks.quotidien.length){html+=`<div class="section-title" style="margin-top:8px">Tâches quotidiennes</div>`;u.tasks.quotidien.forEach(t=>{html+=taskCard(u.name,t,'Tous les jours','quotidien');});}
+  if(u.tasks.hebdo.length){html+=`<div class="section-title" style="margin-top:16px">Tâches hebdomadaires</div>`;u.tasks.hebdo.forEach(({t,jour})=>{html+=taskCard(u.name,t,jour,'hebdo');});}
+  if(u.tasks.mensuel.length){html+=`<div class="section-title" style="margin-top:16px">Tâches mensuelles</div>`;u.tasks.mensuel.forEach(({t,jour})=>{html+=taskCard(u.name,t,jour,'mensuel');});}
+  if(!html)html=`<div style="text-align:center;padding:3rem;color:var(--text2);font-size:14px">Aucune tâche assignée.</div>`;
+  document.getElementById('appContent').innerHTML=html;
+}
+function taskCard(userName,taskName,jour,freq){
+  const s=getState(userName,taskName,freq);
+  const cardClass=s.status==='done'?'done':s.status==='blocked'?'blocked':'';
+  const safeId=encodeURIComponent(userName+'__'+freq+'__'+taskName).replace(/%/g,'_');
+  return `<div class="task-card ${cardClass}" id="card_${safeId}">
+    <div class="task-name">${taskName}</div>
+    <div class="task-meta">📅 ${jour}</div>
+    <div class="status-row">${['À faire|todo','En cours|inprogress','Terminé|done','Bloqué|blocked'].map(x=>{const[label,val]=x.split('|');return `<button class="status-btn ${s.status===val?'active-'+val:''}" onclick="setStatus('${safeId}','${userName}','${taskName}','${freq}','${val}')">${label}</button>`;}).join('')}</div>
+    <textarea class="comment-input" id="cm_${safeId}" placeholder="Commentaire, avancement, blocage...">${s.comment||''}</textarea>
+    <div style="display:flex;align-items:center">
+      <button class="save-btn" onclick="saveEntry('${safeId}','${userName}','${taskName}','${freq}')">Enregistrer</button>
+      <span class="saved-badge" id="sb_${safeId}">✓ Enregistré</span>
+    </div>
+  </div>`;
+}
+function setStatus(safeId,userName,taskName,freq,val){
+  setState(userName,taskName,freq,'status',val);
+  const card=document.getElementById('card_'+safeId);
+  card.className='task-card '+(val==='done'?'done':val==='blocked'?'blocked':'');
+  card.querySelectorAll('.status-btn').forEach(b=>{b.className='status-btn';if(b.textContent.trim()==={todo:'À faire',inprogress:'En cours',done:'Terminé',blocked:'Bloqué'}[val])b.className='status-btn active-'+val;});
+}
+function saveEntry(safeId,userName,taskName,freq){
+  setState(userName,taskName,freq,'comment',document.getElementById('cm_'+safeId).value);
+  const badge=document.getElementById('sb_'+safeId);
+  badge.classList.add('show');
+  setTimeout(()=>badge.classList.remove('show'),2000);
+}
+function renderManager(){
+  let html=`<div class="manager-tabs">${['quotidien','hebdo','mensuel'].map(t=>`<button class="mtab ${mTab===t?'active':''}" onclick="switchTab('${t}')">${{quotidien:'Quotidien',hebdo:'Hebdomadaire',mensuel:'Mensuel'}[t]}</button>`).join('')}</div>`;
+  const allTasks=[];
+  USERS.forEach(u=>{
+    const list=mTab==='quotidien'?u.tasks.quotidien.map(t=>({t,jour:'Tous les jours'})):mTab==='hebdo'?u.tasks.hebdo:u.tasks.mensuel;
+    list.forEach(item=>{const taskName=typeof item==='string'?item:item.t;const s=getState(u.name,taskName,mTab);allTasks.push({user:u,taskName,status:s.status,comment:s.comment});});
+  });
+  const done=allTasks.filter(t=>t.status==='done').length;
+  const inprog=allTasks.filter(t=>t.status==='inprogress').length;
+  const blocked=allTasks.filter(t=>t.status==='blocked').length;
+  const missing=allTasks.filter(t=>!t.status).length;
+  if(missing>0)html+=`<div class="alert-bar">⚠️ ${missing} tâche${missing>1?'s':''} sans statut aujourd'hui</div>`;
+  html+=`<div class="progress-summary"><div class="ps-card"><div class="ps-val" style="color:var(--green)">${done}</div><div class="ps-label">Terminées</div></div><div class="ps-card"><div class="ps-val" style="color:var(--orange)">${inprog}</div><div class="ps-label">En cours</div></div><div class="ps-card"><div class="ps-val" style="color:var(--red)">${blocked}</div><div class="ps-label">Bloquées</div></div><div class="ps-card"><div class="ps-val" style="color:var(--text2)">${missing}</div><div class="ps-label">Non rempli</div></div></div>`;
+  html+=`<div class="manager-table"><table><thead><tr><th>Collaborateur</th><th>Tâche</th><th>Statut</th><th>Commentaire</th></tr></thead><tbody>${allTasks.map(({user,taskName,status,comment})=>`<tr><td style="display:flex;align-items:center;gap:6px">${av(user,20)} ${user.name}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${taskName}</td><td><span class="s-badge ${status?'s-'+status:'s-missing'}">${{todo:'À faire',inprogress:'En cours',done:'Terminé',blocked:'Bloqué','':'Non rempli'}[status||'']}</span></td><td style="font-size:11px;color:var(--text2)">${comment||'—'}</td></tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('appContent').innerHTML=html;
+}
+function switchTab(t){mTab=t;renderManager();}
+buildLogin();
+</script>
+</body>
+</html>
