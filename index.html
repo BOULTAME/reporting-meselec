@@ -17,7 +17,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .login-btn:hover{border-color:var(--accent);background:var(--accent-light)}
 .login-btn .av{width:40px;height:40px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
 .login-btn .name{font-size:13px;font-weight:500;color:var(--text)}
-.manager-btn{background:var(--text);border-color:var(--text);color:#fff;border-radius:var(--radius);padding:12px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;margin-top:8px;border:none}
+.manager-btn{background:var(--text);color:#fff;border-radius:var(--radius);padding:12px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;margin-top:8px;border:none}
 .app{display:none;flex-direction:column;min-height:100vh}
 .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .topbar-left{display:flex;align-items:center;gap:10px}
@@ -43,6 +43,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .save-btn{margin-top:8px;height:32px;padding:0 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
 .saved-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--green);margin-top:8px;opacity:0;transition:opacity .3s;margin-left:8px}
 .saved-badge.show{opacity:1}
+/* Jours de la semaine */
+.days-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.day-btn{height:32px;width:40px;border-radius:6px;border:1.5px solid var(--border);background:transparent;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);transition:all .12s;display:flex;align-items:center;justify-content:center}
+.day-btn.checked{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.day-btn.today{border-color:var(--accent);font-weight:700}
+.days-label{font-size:11px;color:var(--text2);margin-bottom:4px}
+.week-progress{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.week-progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+/* Manager */
 .manager-tabs{display:flex;gap:6px;margin-bottom:16px}
 .mtab{height:32px;padding:0 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2)}
 .mtab.active{background:var(--text);color:#fff;border-color:var(--text)}
@@ -87,26 +96,40 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 <script>
 const USERS=[
-  {name:'Mialy',color:'#E1F5EE',fg:'#085041',tasks:{quotidien:['Gestion comptabilité générale','Gestion des absences salariés'],hebdo:[{t:'Relancer clients impayés',jour:'Lundi'},{t:'Préparation paiement fournisseurs',jour:'Vendredi'}],mensuel:[{t:'Facturer les devis',jour:'15 et 30 du mois'},{t:'Affacturer les factures',jour:'15 et 30 du mois'},{t:'Préparation des paies',jour:'Arrêt le 25'},{t:'Déclaration TVA',jour:'Fin de mois'},{t:'Reporting trésorerie',jour:'Fin de mois'},{t:'Déclaration DSN',jour:'Fin de mois'},{t:'Fiches de paie',jour:'Arrêt le 25'},{t:'Intégration OD paie',jour:'Fin de mois'},{t:'Suivi plan de formation',jour:'Fin de mois'},{t:'Gestion carte gazole',jour:'15 et 31 du mois'}]}},
-  {name:'Soukaina',color:'#FAEEDA',fg:'#633806',tasks:{quotidien:['Brief productivité cible → Younous','Valider feuilles attachement ERP','Mettre à jour données projets','Feuilles manquantes → Younous'],hebdo:[{t:'Planning hebdo EP/Tertiaire',jour:'Vendredi'},{t:'Point pilotage exploitation',jour:'Vendredi'},{t:'Prépa réunions planning',jour:'Vendredi'}],mensuel:[{t:'Relancer devis en attente',jour:'15 et 31 du mois'},{t:'Relevé mensuel jours travaillés',jour:'Fin de mois'},{t:'Point facturation au 15',jour:'Le 15'},{t:'Point facturation au 30/31',jour:'Le 30/31'}]}},
-  {name:'Younous',color:'#E6F1FB',fg:'#0C447C',tasks:{quotidien:['Brief chantiers → Soukaina','Récupérer feuilles attachement terrain','Contrôle cadence & performances terrain'],hebdo:[],mensuel:[{t:'Contrôle EPI/Outils chantier',jour:'Dernière semaine'},{t:'Entretien véhicules',jour:'1x par trimestre'}]}},
+  {name:'Mialy',color:'#E1F5EE',fg:'#085041',tasks:{quotidien:[{t:'Gestion comptabilité générale',jour:'Tous les jours',joursMode:true},{t:'Gestion des absences salariés',jour:'Tous les jours'}],hebdo:[{t:'Relancer clients impayés',jour:'Lundi'},{t:'Préparation paiement fournisseurs',jour:'Vendredi'}],mensuel:[{t:'Facturer les devis',jour:'15 et 30 du mois'},{t:'Affacturer les factures',jour:'15 et 30 du mois'},{t:'Préparation des paies',jour:'Arrêt le 25'},{t:'Déclaration TVA',jour:'Fin de mois'},{t:'Reporting trésorerie',jour:'Fin de mois'},{t:'Déclaration DSN',jour:'Fin de mois'},{t:'Fiches de paie',jour:'Arrêt le 25'},{t:'Intégration OD paie',jour:'Fin de mois'},{t:'Suivi plan de formation',jour:'Fin de mois'},{t:'Gestion carte gazole',jour:'15 et 31 du mois'}]}},
+  {name:'Soukaina',color:'#FAEEDA',fg:'#633806',tasks:{quotidien:[{t:'Brief productivité cible → Younous',jour:'Tous les jours'},{t:'Valider feuilles attachement ERP',jour:'Tous les jours'},{t:'Mettre à jour données projets',jour:'Tous les jours'},{t:'Feuilles manquantes → Younous',jour:'Tous les jours'}],hebdo:[{t:'Planning hebdo EP/Tertiaire',jour:'Vendredi'},{t:'Point pilotage exploitation',jour:'Vendredi'},{t:'Prépa réunions planning',jour:'Vendredi'}],mensuel:[{t:'Relancer devis en attente',jour:'15 et 31 du mois'},{t:'Relevé mensuel jours travaillés',jour:'Fin de mois'},{t:'Point facturation au 15',jour:'Le 15'},{t:'Point facturation au 30/31',jour:'Le 30/31'}]}},
+  {name:'Younous',color:'#E6F1FB',fg:'#0C447C',tasks:{quotidien:[{t:'Brief chantiers → Soukaina',jour:'Tous les jours'},{t:'Récupérer feuilles attachement terrain',jour:'Tous les jours'},{t:'Contrôle cadence & performances terrain',jour:'Tous les jours'}],hebdo:[],mensuel:[{t:'Contrôle EPI/Outils chantier',jour:'Dernière semaine'},{t:'Entretien véhicules',jour:'1x par trimestre'}]}},
   {name:'Lina',color:'#FBEAF0',fg:'#72243E',tasks:{quotidien:[],hebdo:[{t:'Gestion LinkedIn',jour:'Lundi'},{t:'Fiche prospect',jour:'Mercredi'}],mensuel:[]}},
   {name:'Yanis',color:'#EAF3DE',fg:'#27500A',tasks:{quotidien:[],hebdo:[{t:'Gestion dépôt extérieur',jour:'Mar. & Jeu. après-midi'}],mensuel:[]}},
-  {name:'Arnaud',color:'#FAECE7',fg:'#712B13',tasks:{quotidien:['Gestion dépôt intérieur'],hebdo:[],mensuel:[]}},
+  {name:'Arnaud',color:'#FAECE7',fg:'#712B13',tasks:{quotidien:[{t:'Gestion dépôt intérieur',jour:'Tous les jours'}],hebdo:[],mensuel:[]}},
   {name:'Salim',color:'#EEEDFE',fg:'#3C3489',tasks:{quotidien:[],hebdo:[],mensuel:[{t:'Point mensuel situation financière',jour:'Fin de mois'},{t:'Reporting P&L',jour:'Fin de mois'}]}},
   {name:'Cissé',color:'#FCEBEB',fg:'#791F1F',tasks:{quotidien:[],hebdo:[],mensuel:[]}},
   {name:'Rida',color:'#F1EFE8',fg:'#444441',tasks:{quotidien:[],hebdo:[],mensuel:[]}},
   {name:'Mathieu',color:'#FAEEDA',fg:'#854F0B',tasks:{quotidien:[],hebdo:[],mensuel:[]}},
 ];
+
+const JOURS=['Lun','Mar','Mer','Jeu','Ven'];
 let currentUser=null,isManager=false,mTab='quotidien';
 const state={};
-function getToday(){return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
+
+function getWeekKey(){
+  const d=new Date();
+  const jan1=new Date(d.getFullYear(),0,1);
+  const week=Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
+  return `${d.getFullYear()}-W${week}`;
+}
 function getTodayKey(){return new Date().toISOString().slice(0,10);}
+function getTodayDayIndex(){
+  const d=new Date().getDay();
+  return d===0?-1:d-1; // 0=Lun, 4=Ven, -1=weekend
+}
+function getToday(){return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
 function av(u,size=32){return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${u.color};color:${u.fg};display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.38)}px;font-weight:600">${u.name.slice(0,2).toUpperCase()}</div>`;}
 function buildLogin(){document.getElementById('loginGrid').innerHTML=USERS.map(u=>`<button class="login-btn" onclick="login('${u.name}')">${av(u,40)}<div class="name">${u.name}</div></button>`).join('');}
 function login(name){currentUser=USERS.find(u=>u.name===name);isManager=false;showApp();}
 function loginManager(){currentUser=null;isManager=true;showApp();}
 function logout(){document.getElementById('loginScreen').style.display='flex';document.getElementById('appScreen').style.display='none';}
+
 function showApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('appScreen').style.display='flex';
@@ -123,32 +146,74 @@ function showApp(){
     renderUser();
   }
 }
+
 function getKey(u,t,f){return `${u}||${f}||${t}||${getTodayKey()}`;}
+function getWeekDayKey(u,t,dayIdx){return `days||${u}||${t}||${getWeekKey()}||${dayIdx}`;}
 function getState(u,t,f){return state[getKey(u,t,f)]||{status:'',comment:''};}
 function setState(u,t,f,field,val){const k=getKey(u,t,f);if(!state[k])state[k]={status:'',comment:''};state[k][field]=val;}
+function getDayChecked(u,t,dayIdx){return state[getWeekDayKey(u,t,dayIdx)]||false;}
+function toggleDay(u,t,dayIdx,safeId){
+  const k=getWeekDayKey(u,t,dayIdx);
+  state[k]=!state[k];
+  renderDays(u,t,safeId);
+}
+
+function renderDays(userName,taskName,safeId){
+  const todayIdx=getTodayDayIndex();
+  const checked=JOURS.map((_,i)=>getDayChecked(userName,taskName,i));
+  const count=checked.filter(Boolean).length;
+  const pct=Math.round(count/5*100);
+  const html=`
+    <div class="days-label">Jours réalisés cette semaine (${count}/5)</div>
+    <div class="days-row">${JOURS.map((j,i)=>`
+      <button class="day-btn ${checked[i]?'checked':''} ${i===todayIdx?'today':''}"
+        onclick="toggleDay('${userName}','${taskName}',${i},'${safeId}')"
+        title="${checked[i]?'Marquer comme non fait':'Marquer comme fait'}">${j}</button>`).join('')}
+    </div>
+    <div class="week-progress"><div class="week-progress-fill" style="width:${pct}%"></div></div>`;
+  const el=document.getElementById('days_'+safeId);
+  if(el)el.innerHTML=html;
+}
+
+function taskCard(userName,taskName,jour,freq,joursMode=false){
+  const s=getState(userName,taskName,freq);
+  const cardClass=s.status==='done'?'done':s.status==='blocked'?'blocked':'';
+  const safeId=encodeURIComponent(userName+'__'+freq+'__'+taskName).replace(/%/g,'_');
+  const todayIdx=getTodayDayIndex();
+  const daysHtml=joursMode?`<div id="days_${safeId}"></div>`:'';
+  const statusHtml=joursMode?'':`<div class="status-row">${['À faire|todo','En cours|inprogress','Terminé|done','Bloqué|blocked'].map(x=>{const[label,val]=x.split('|');return `<button class="status-btn ${s.status===val?'active-'+val:''}" onclick="setStatus('${safeId}','${userName}','${taskName}','${freq}','${val}')">${label}</button>`;}).join('')}</div>`;
+  const commentHtml=joursMode?'':`<textarea class="comment-input" id="cm_${safeId}" placeholder="Commentaire...">${s.comment||''}</textarea><div style="display:flex;align-items:center"><button class="save-btn" onclick="saveEntry('${safeId}','${userName}','${taskName}','${freq}')">Enregistrer</button><span class="saved-badge" id="sb_${safeId}">✓ Enregistré</span></div>`;
+  return `<div class="task-card ${cardClass}" id="card_${safeId}">
+    <div class="task-name">${taskName}</div>
+    <div class="task-meta">📅 ${jour}</div>
+    ${statusHtml}${daysHtml}${commentHtml}
+  </div>`;
+}
+
 function renderUser(){
   const u=currentUser;let html='';
-  if(u.tasks.quotidien.length){html+=`<div class="section-title" style="margin-top:8px">Tâches quotidiennes</div>`;u.tasks.quotidien.forEach(t=>{html+=taskCard(u.name,t,'Tous les jours','quotidien');});}
+  if(u.tasks.quotidien.length){
+    html+=`<div class="section-title" style="margin-top:8px">Tâches quotidiennes</div>`;
+    u.tasks.quotidien.forEach(item=>{
+      const t=typeof item==='string'?item:item.t;
+      const jour=typeof item==='string'?'Tous les jours':item.jour;
+      const joursMode=typeof item==='object'&&item.joursMode===true;
+      html+=taskCard(u.name,t,jour,'quotidien',joursMode);
+    });
+  }
   if(u.tasks.hebdo.length){html+=`<div class="section-title" style="margin-top:16px">Tâches hebdomadaires</div>`;u.tasks.hebdo.forEach(({t,jour})=>{html+=taskCard(u.name,t,jour,'hebdo');});}
   if(u.tasks.mensuel.length){html+=`<div class="section-title" style="margin-top:16px">Tâches mensuelles</div>`;u.tasks.mensuel.forEach(({t,jour})=>{html+=taskCard(u.name,t,jour,'mensuel');});}
   if(!html)html=`<div style="text-align:center;padding:3rem;color:var(--text2);font-size:14px">Aucune tâche assignée.</div>`;
   document.getElementById('appContent').innerHTML=html;
+  // Init jours mode
+  u.tasks.quotidien.forEach(item=>{
+    if(typeof item==='object'&&item.joursMode){
+      const safeId=encodeURIComponent(u.name+'__quotidien__'+item.t).replace(/%/g,'_');
+      renderDays(u.name,item.t,safeId);
+    }
+  });
 }
-function taskCard(userName,taskName,jour,freq){
-  const s=getState(userName,taskName,freq);
-  const cardClass=s.status==='done'?'done':s.status==='blocked'?'blocked':'';
-  const safeId=encodeURIComponent(userName+'__'+freq+'__'+taskName).replace(/%/g,'_');
-  return `<div class="task-card ${cardClass}" id="card_${safeId}">
-    <div class="task-name">${taskName}</div>
-    <div class="task-meta">📅 ${jour}</div>
-    <div class="status-row">${['À faire|todo','En cours|inprogress','Terminé|done','Bloqué|blocked'].map(x=>{const[label,val]=x.split('|');return `<button class="status-btn ${s.status===val?'active-'+val:''}" onclick="setStatus('${safeId}','${userName}','${taskName}','${freq}','${val}')">${label}</button>`;}).join('')}</div>
-    <textarea class="comment-input" id="cm_${safeId}" placeholder="Commentaire, avancement, blocage...">${s.comment||''}</textarea>
-    <div style="display:flex;align-items:center">
-      <button class="save-btn" onclick="saveEntry('${safeId}','${userName}','${taskName}','${freq}')">Enregistrer</button>
-      <span class="saved-badge" id="sb_${safeId}">✓ Enregistré</span>
-    </div>
-  </div>`;
-}
+
 function setStatus(safeId,userName,taskName,freq,val){
   setState(userName,taskName,freq,'status',val);
   const card=document.getElementById('card_'+safeId);
@@ -157,24 +222,30 @@ function setStatus(safeId,userName,taskName,freq,val){
 }
 function saveEntry(safeId,userName,taskName,freq){
   setState(userName,taskName,freq,'comment',document.getElementById('cm_'+safeId).value);
-  const badge=document.getElementById('sb_'+safeId);
-  badge.classList.add('show');
-  setTimeout(()=>badge.classList.remove('show'),2000);
+  const badge=document.getElementById('sb_'+safeId);badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),2000);
 }
+
 function renderManager(){
   let html=`<div class="manager-tabs">${['quotidien','hebdo','mensuel'].map(t=>`<button class="mtab ${mTab===t?'active':''}" onclick="switchTab('${t}')">${{quotidien:'Quotidien',hebdo:'Hebdomadaire',mensuel:'Mensuel'}[t]}</button>`).join('')}</div>`;
   const allTasks=[];
   USERS.forEach(u=>{
-    const list=mTab==='quotidien'?u.tasks.quotidien.map(t=>({t,jour:'Tous les jours'})):mTab==='hebdo'?u.tasks.hebdo:u.tasks.mensuel;
-    list.forEach(item=>{const taskName=typeof item==='string'?item:item.t;const s=getState(u.name,taskName,mTab);allTasks.push({user:u,taskName,status:s.status,comment:s.comment});});
+    const list=mTab==='quotidien'?u.tasks.quotidien.map(i=>({t:typeof i==='string'?i:i.t,jour:'Tous les jours',joursMode:typeof i==='object'&&i.joursMode})):mTab==='hebdo'?u.tasks.hebdo:u.tasks.mensuel;
+    list.forEach(item=>{
+      const taskName=typeof item==='string'?item:item.t;
+      const joursMode=item.joursMode||false;
+      const s=getState(u.name,taskName,mTab);
+      let joursInfo='';
+      if(joursMode){const count=JOURS.map((_,i)=>getDayChecked(u.name,taskName,i)).filter(Boolean).length;joursInfo=`${count}/5 jours`;}
+      allTasks.push({user:u,taskName,status:joursMode?'jours':s.status,comment:joursMode?joursInfo:s.comment,joursMode});
+    });
   });
   const done=allTasks.filter(t=>t.status==='done').length;
   const inprog=allTasks.filter(t=>t.status==='inprogress').length;
   const blocked=allTasks.filter(t=>t.status==='blocked').length;
-  const missing=allTasks.filter(t=>!t.status).length;
+  const missing=allTasks.filter(t=>!t.status&&!t.joursMode).length;
   if(missing>0)html+=`<div class="alert-bar">⚠️ ${missing} tâche${missing>1?'s':''} sans statut aujourd'hui</div>`;
   html+=`<div class="progress-summary"><div class="ps-card"><div class="ps-val" style="color:var(--green)">${done}</div><div class="ps-label">Terminées</div></div><div class="ps-card"><div class="ps-val" style="color:var(--orange)">${inprog}</div><div class="ps-label">En cours</div></div><div class="ps-card"><div class="ps-val" style="color:var(--red)">${blocked}</div><div class="ps-label">Bloquées</div></div><div class="ps-card"><div class="ps-val" style="color:var(--text2)">${missing}</div><div class="ps-label">Non rempli</div></div></div>`;
-  html+=`<div class="manager-table"><table><thead><tr><th>Collaborateur</th><th>Tâche</th><th>Statut</th><th>Commentaire</th></tr></thead><tbody>${allTasks.map(({user,taskName,status,comment})=>`<tr><td style="display:flex;align-items:center;gap:6px">${av(user,20)} ${user.name}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${taskName}</td><td><span class="s-badge ${status?'s-'+status:'s-missing'}">${{todo:'À faire',inprogress:'En cours',done:'Terminé',blocked:'Bloqué','':'Non rempli'}[status||'']}</span></td><td style="font-size:11px;color:var(--text2)">${comment||'—'}</td></tr>`).join('')}</tbody></table></div>`;
+  html+=`<div class="manager-table"><table><thead><tr><th>Collaborateur</th><th>Tâche</th><th>Statut</th><th>Info</th></tr></thead><tbody>${allTasks.map(({user,taskName,status,comment,joursMode})=>`<tr><td style="display:flex;align-items:center;gap:6px">${av(user,20)} ${user.name}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${taskName}</td><td>${joursMode?`<span class="s-badge s-todo">Hebdo</span>`:`<span class="s-badge ${status?'s-'+status:'s-missing'}">${{todo:'À faire',inprogress:'En cours',done:'Terminé',blocked:'Bloqué','':'Non rempli'}[status||'']}</span>`}</td><td style="font-size:11px;color:var(--text2)">${comment||'—'}</td></tr>`).join('')}</tbody></table></div>`;
   document.getElementById('appContent').innerHTML=html;
 }
 function switchTab(t){mTab=t;renderManager();}
